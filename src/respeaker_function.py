@@ -8,17 +8,13 @@
 #-----------------------------------------------
 
 #Python関係
-#import yaml import load
+import time
 import sys
 #ROS関係
 import rospy
-#import rosparam
 from std_msgs.msg import String, Float64, Int32
 from geometry_msgs.msg import PoseStamped
-#from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
-#from gcp_texttospeech.srv import TTS
-#from mimi_common_pkg.msg import common_function
 
 class MimiControl():
     def __init__(self):
@@ -26,7 +22,7 @@ class MimiControl():
         #Subscriber
         self.sub_location = rospy.Subscriber('/sound_localization', PoseStamped, self.locationCB)
         self.sub_angle = rospy.Subscriber('/sound_direction', Int32, self.angleCB)
-        self.location = PoseStamped()
+     #   self.location = PoseStamped()
         self.angle = Int32()
         self.twist_value = Twist()
         self.flg = False
@@ -44,19 +40,27 @@ class MimiControl():
             self.angle = receive_msg
             self.flg = True
 
+    def rotateMimi(self, angle):
+        target_time = abs(angle*0.0235)
+        if angle >= 0:
+            self.twist_value.angular.z = 1.0
+        elif self.angle < 0:
+            self.twist_value.angular.z = -1.0
+        rate = rospy.Rate(500)
+        start_time = time.time()
+        end_time = time.time()
+        while end_time - start_time <= target_time:
+            self.pub_cmd_vel_mux.publish(self.twist_value)
+            end_time_time = time.time()
+            rate.sleep()
+            vass
+
     def faceOperator(self):
         try:
             while not rospy.is_shutdown() and self.flg == False:
                 print 'wait for instructions'
                 rospy.sleep(1.0)
-            if self.angle >= 0:
-                self.twist_value.angular.z = 1.0
-            elif self.angle < 0
-                self.twist_value.angular.z = -1.0
-            count = abs(self.angle)
-            for i in range(count):
-                self.pub_cmd_vel_mux.publish(self.twist_value)
-                rospy.sleep(0.004)
+            self.rotateMimi(self.angle)
         except rospy.ROSInterruptException:
             rospy.loginfo('**Interrupted**')
             pass
