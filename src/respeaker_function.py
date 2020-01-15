@@ -53,7 +53,6 @@ class MimiControl():
             self.pub_cmd_vel_mux.publish(self.twist_value)
             end_time_time = time.time()
             rate.sleep()
-            vass
 
     def faceOperator(self):
         try:
