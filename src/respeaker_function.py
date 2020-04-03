@@ -34,6 +34,7 @@ class MimiControl():
                 print 'wait for sound..'
                 rospy.sleep(1.0)
             self.flag = False
+            angleRotation(self.angle)
         except rospy.ROSInterruptException:
             rospy.loginfo('**Interrupted**')
             pass
